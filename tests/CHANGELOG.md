@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [23.0.1](https://github.com/invertase/react-native-firebase/compare/v23.0.0...v23.0.1) (2025-08-12)
+
+### Bug Fixes
+
+- **app, android:** adopt firebase-android-sdk 34.1.0 ([b9af1d3](https://github.com/invertase/react-native-firebase/commit/b9af1d3d24a4fa77587eb1a9f7a5d784750a58bb))
+
+## [23.0.0](https://github.com/invertase/react-native-firebase/compare/v22.4.0...v23.0.0) (2025-08-07)
+
+### ⚠ BREAKING CHANGES
+
+- new minimums: iOS 15+, Xcode 16.2+
+- **dynamic-links:** remove Dynamic Links from React Native Firebase (#8631)
+
+### Features
+
+- bump firebase-ios-sdk to `12.0.0` ([e3d6d22](https://github.com/invertase/react-native-firebase/commit/e3d6d222f0a83f6a3f6ea6975401e4b03cc4421a))
+
+### Bug Fixes
+
+- **app, ios:** adopt firebase-ios-sdk 12.1.0 ([8be970c](https://github.com/invertase/react-native-firebase/commit/8be970c86fff5ad8d046ccba442f54bec3ecaf41))
+- **dynamic-links:** remove Dynamic Links from React Native Firebase ([#8631](https://github.com/invertase/react-native-firebase/issues/8631)) ([fe4550f](https://github.com/invertase/react-native-firebase/commit/fe4550f362548dcb66359044715e22222a413f97))
+
 ## [22.4.0](https://github.com/invertase/react-native-firebase/compare/v22.3.0...v22.4.0) (2025-07-10)
 
 ### Bug Fixes

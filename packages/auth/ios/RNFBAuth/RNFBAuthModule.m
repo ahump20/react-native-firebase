@@ -45,7 +45,6 @@ static NSString *const constAppLanguage = @"APP_LANGUAGE";
 static NSString *const constAppUser = @"APP_USER";
 static NSString *const keyHandleCodeInApp = @"handleCodeInApp";
 static NSString *const keyLinkDomain = @"linkDomain";
-static NSString *const keyDynamicLinkDomain = @"dynamicLinkDomain";
 static NSString *const keyAdditionalUserInfo = @"additionalUserInfo";
 static NSString *const AUTH_STATE_CHANGED_EVENT = @"auth_state_changed";
 static NSString *const AUTH_ID_TOKEN_CHANGED_EVENT = @"auth_id_token_changed";
@@ -1463,15 +1462,6 @@ RCT_EXPORT_METHOD(useEmulator
 }
 #endif
 
-- (NSString *)getJSFactorId:(NSString *)factorId {
-  if ([factorId isEqualToString:@"1"]) {
-    // Only phone is supported by the front-end so far
-    return @"phone";
-  }
-
-  return factorId;
-}
-
 - (void)promiseRejectAuthException:(RCTPromiseRejectBlock)reject error:(NSError *)error {
   NSDictionary *jsError = [self getJSError:error];
 
@@ -1738,19 +1728,25 @@ RCT_EXPORT_METHOD(useEmulator
 - (NSArray<NSMutableDictionary *> *)convertMultiFactorData:(NSArray<FIRMultiFactorInfo *> *)hints {
   NSMutableArray *enrolledFactors = [NSMutableArray array];
 
-  for (FIRPhoneMultiFactorInfo *hint in hints) {
+  for (FIRMultiFactorInfo *hint in hints) {
     NSString *enrollmentTime =
         [[[NSISO8601DateFormatter alloc] init] stringFromDate:hint.enrollmentDate];
-    [enrolledFactors addObject:@{
+
+    NSMutableDictionary *factorDict = [@{
       @"uid" : hint.UID,
-      @"factorId" : [self getJSFactorId:(hint.factorID)],
+      @"factorId" : hint.factorID,
       @"displayName" : hint.displayName == nil ? [NSNull null] : hint.displayName,
       @"enrollmentTime" : enrollmentTime,
       // @deprecated enrollmentDate kept for backwards compatibility, please use enrollmentTime
       @"enrollmentDate" : enrollmentTime,
-      // phoneNumber only present on FIRPhoneMultiFactorInfo
-      @"phoneNumber" : hint.phoneNumber == nil ? [NSNull null] : hint.phoneNumber,
-    }];
+    } mutableCopy];
+
+    // only support phone mutli factor
+    if ([hint isKindOfClass:[FIRPhoneMultiFactorInfo class]]) {
+      FIRPhoneMultiFactorInfo *phoneHint = (FIRPhoneMultiFactorInfo *)hint;
+      factorDict[@"phoneNumber"] = phoneHint.phoneNumber;
+      [enrolledFactors addObject:factorDict];
+    }
   }
   return enrolledFactors;
 }
@@ -1783,11 +1779,6 @@ RCT_EXPORT_METHOD(useEmulator
   if (actionCodeSettings[keyHandleCodeInApp]) {
     BOOL handleCodeInApp = [actionCodeSettings[keyHandleCodeInApp] boolValue];
     [settings setHandleCodeInApp:handleCodeInApp];
-  }
-
-  if (actionCodeSettings[keyDynamicLinkDomain]) {
-    NSString *dynamicLinkDomain = actionCodeSettings[keyDynamicLinkDomain];
-    [settings setDynamicLinkDomain:dynamicLinkDomain];
   }
 
   if (actionCodeSettings[keyAndroid]) {
